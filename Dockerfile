@@ -17,15 +17,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy project
 COPY . .
 
-# Set Python path to include portfolio directory
-ENV PYTHONPATH=/app/portfolio:$PYTHONPATH
-
-# Create staticfiles directory
-RUN mkdir -p portfolio/staticfiles
-
-# Collect static files
-RUN cd portfolio && python ../manage.py collectstatic --noinput
-
 EXPOSE 8000
 
-CMD ["gunicorn", "portfolio.wsgi:application", "--bind", "0.0.0.0:8000", "--chdir", "/app/portfolio"]
+# Run Django commands and start server
+CMD python portfolio/manage.py migrate && \
+    python portfolio/manage.py collectstatic --noinput && \
+    gunicorn portfolio.wsgi:application --bind 0.0.0.0:8000
