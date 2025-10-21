@@ -1,2 +1,2 @@
-web: gunicorn portfolio.wsgi
-release: python manage.py migrate
+web: cd portfolio && gunicorn portfolio.wsgi
+release: cd portfolio && python manage.py migrate
