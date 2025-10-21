@@ -8,11 +8,23 @@ import os
 class Command(BaseCommand):
     help = 'Load initial data into the database'
 
+    def add_arguments(self, parser):
+        parser.add_argument('--force', action='store_true', help='Force reload all data')
+
     def handle(self, *args, **options):
+        force = options.get('force', False)
+        
         # Create superuser if it doesn't exist
         if not User.objects.filter(username='Brian').exists():
             User.objects.create_superuser('Brian', 'brianvillanuevagonzalez@gmail.com', 'holamundo')
             self.stdout.write(self.style.SUCCESS('✓ Superuser created: Brian'))
+
+        # Clear existing data if force is set
+        if force:
+            Profile.objects.all().delete()
+            Project.objects.all().delete()
+            Skill.objects.all().delete()
+            self.stdout.write(self.style.WARNING('⚠ Cleared existing data'))
 
         # Create Profile with photo
         if not Profile.objects.exists():
@@ -32,8 +44,12 @@ class Command(BaseCommand):
                 with open(photo_path, 'rb') as f:
                     profile.photo.save('perfil.jpg', ContentFile(f.read()), save=True)
                 self.stdout.write(self.style.SUCCESS('✓ Profile photo loaded'))
+            else:
+                self.stdout.write(self.style.WARNING(f'⚠ Photo not found at {photo_path}'))
             
             self.stdout.write(self.style.SUCCESS('✓ Profile created'))
+        else:
+            self.stdout.write(self.style.WARNING('⚠ Profile already exists'))
 
         # Create Skills
         skills_data = [
@@ -56,11 +72,13 @@ class Command(BaseCommand):
             ('Celery', 'beginner', 'Backend'),
         ]
 
+        created_skills = 0
         for skill_name, level, category in skills_data:
             if not Skill.objects.filter(name=skill_name).exists():
                 Skill.objects.create(name=skill_name, level=level, category=category)
+                created_skills += 1
         
-        self.stdout.write(self.style.SUCCESS(f'✓ {len(skills_data)} Skills created'))
+        self.stdout.write(self.style.SUCCESS(f'✓ {created_skills} new skills created (Total: {Skill.objects.count()})'))
 
         # Create Projects
         projects_data = [
@@ -122,9 +140,11 @@ class Command(BaseCommand):
             },
         ]
 
+        created_projects = 0
         for project_data in projects_data:
             if not Project.objects.filter(title=project_data['title']).exists():
                 Project.objects.create(**project_data)
+                created_projects += 1
         
-        self.stdout.write(self.style.SUCCESS(f'✓ {len(projects_data)} Projects created'))
-        self.stdout.write(self.style.SUCCESS('\n✅ ¡Todos los datos cargados exitosamente!'))
+        self.stdout.write(self.style.SUCCESS(f'✓ {created_projects} new projects created (Total: {Project.objects.count()})'))
+        self.stdout.write(self.style.SUCCESS('\n✅ ¡Todos los datos están listos!'))

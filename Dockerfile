@@ -16,9 +16,9 @@ COPY . .
 
 EXPOSE 8000
 
-# Run migrations, load data, collect static, then start gunicorn
+# Run migrations, load data (force reload), collect static, then start gunicorn
 CMD sh -c "cd portfolio && \
     python manage.py migrate && \
-    python manage.py load_initial_data || true && \
+    python manage.py load_initial_data --force && \
     python manage.py collectstatic --noinput && \
     gunicorn portfolio.wsgi:application --bind 0.0.0.0:8000"
