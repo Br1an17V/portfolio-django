@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+
+{% block title %}Contacto - Brian Villanueva{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="container">
+        <h1>Contacto</h1>
+        <p>¡Me gustaría escuchar tu propuesta! Contáctame ahora</p>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section class="section">
+    <div class="container">
+        <div class="row">
+            <!-- Contact Form -->
+            <div class="col-lg-8 mb-5 mb-lg-0">
+                <div class="card border-0 shadow-lg">
+                    <div class="card-body p-5">
+                        <h3 class="mb-4" style="color: var(--primary); font-weight: 700;">Enviar Mensaje</h3>
+                        
+                        <form method="POST" class="contact-form">
+                            {% csrf_token %}
+                            
+                            <div class="mb-3">
+                                <label for="{{ form.name.id_for_label }}" class="form-label">
+                                    <strong>{{ form.name.label }}</strong>
+                                </label>
+                                {{ form.name }}
+                                {% if form.name.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.name.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="{{ form.email.id_for_label }}" class="form-label">
+                                    <strong>{{ form.email.label }}</strong>
+                                </label>
+                                {{ form.email }}
+                                {% if form.email.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.email.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="{{ form.subject.id_for_label }}" class="form-label">
+                                    <strong>{{ form.subject.label }}</strong>
+                                </label>
+                                {{ form.subject }}
+                                {% if form.subject.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.subject.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="{{ form.message.id_for_label }}" class="form-label">
+                                    <strong>{{ form.message.label }}</strong>
+                                </label>
+                                {{ form.message }}
+                                {% if form.message.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.message.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-lg w-100">
+                                <i class="fas fa-paper-plane"></i> Enviar Mensaje
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Info -->
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-lg mb-4">
+                    <div class="card-body p-5">
+                        <h5 class="mb-4" style="color: var(--primary); font-weight: 700;">
+                            <i class="fas fa-info-circle"></i> Información de Contacto
+                        </h5>
+
+                        {% if profile %}
+                            <div class="mb-4">
+                                <p style="color: #666; margin-bottom: 5px;">
+                                    <strong><i class="fas fa-envelope" style="color: var(--primary); margin-right: 10px;"></i> Email</strong>
+                                </p>
+                                <p>
+                                    <a href="mailto:{{ profile.email }}" style="color: var(--primary); text-decoration: none;">
+                                        {{ profile.email }}
+                                    </a>
+                                </p>
+                            </div>
+
+                            {% if profile.phone %}
+                                <div class="mb-4">
+                                    <p style="color: #666; margin-bottom: 5px;">
+                                        <strong><i class="fas fa-phone" style="color: var(--primary); margin-right: 10px;"></i> Teléfono</strong>
+                                    </p>
+                                    <p>
+                                        <a href="tel:{{ profile.phone }}" style="color: var(--primary); text-decoration: none;">
+                                            {{ profile.phone }}
+                                        </a>
+                                    </p>
+                                </div>
+                            {% endif %}
+
+                            <div class="mb-4">
+                                <p style="color: #666; margin-bottom: 5px;">
+                                    <strong><i class="fas fa-map-marker-alt" style="color: var(--primary); margin-right: 10px;"></i> Ubicación</strong>
+                                </p>
+                                <p>{{ profile.location }}</p>
+                            </div>
+                        {% endif %}
+
+                        <hr>
+
+                        <h5 style="color: var(--primary); font-weight: 700; margin-top: 20px; margin-bottom: 15px;">
+                            <i class="fas fa-globe"></i> Conecta Conmigo
+                        </h5>
+
+                        {% if profile %}
+                            {% if profile.github_url %}
+                                <a href="{{ profile.github_url }}" target="_blank" rel="noopener" class="btn btn-outline-primary btn-sm w-100 mb-2">
+                                    <i class="fab fa-github"></i> GitHub
+                                </a>
+                            {% endif %}
+
+                            {% if profile.linkedin_url %}
+                                <a href="{{ profile.linkedin_url }}" target="_blank" rel="noopener" class="btn btn-outline-primary btn-sm w-100 mb-2">
+                                    <i class="fab fa-linkedin"></i> LinkedIn
+                                </a>
+                            {% endif %}
+
+                            {% if profile.twitter_url %}
+                                <a href="{{ profile.twitter_url }}" target="_blank" rel="noopener" class="btn btn-outline-primary btn-sm w-100 mb-2">
+                                    <i class="fab fa-twitter"></i> Twitter
+                                </a>
+                            {% endif %}
+
+                            {% if profile.instagram_url %}
+                                <a href="{{ profile.instagram_url }}" target="_blank" rel="noopener" class="btn btn-outline-primary btn-sm w-100">
+                                    <i class="fab fa-instagram"></i> Instagram
+                                </a>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Quick Response Info -->
+                <div class="alert alert-info border-0" style="background-color: rgba(102, 126, 234, 0.1); color: var(--primary);">
+                    <p style="margin: 0;">
+                        <i class="fas fa-clock"></i>
+                        <strong>Respondo mensajes en 24-48 horas.</strong>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="section" style="background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); color: white;">
+    <div class="container text-center">
+        <h2 style="font-size: 2.5rem; font-weight: 700; margin-bottom: 20px;">
+            ¿Listo para empezar?
+        </h2>
+        <p style="font-size: 1.2rem; margin-bottom: 30px;">
+            Juntos podemos crear algo extraordinario. Envía tu mensaje y hablemos.
+        </p>
+    </div>
+</section>
+
+{% endblock %}

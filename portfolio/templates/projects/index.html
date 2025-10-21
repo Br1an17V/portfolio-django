@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+
+{% block title %}Inicio - Mi Portafolio{% endblock %}
+
+{% block content %}
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>¡Hola! Soy Desarrollador</h1>
+            <p>Bienvenido a mi portafolio de proyectos</p>
+            <p style="font-size: 1rem; opacity: 0.8; margin-top: 20px;">
+                Tengo {{ all_projects_count }} proyecto{{ all_projects_count|pluralize }} en mi portafolio
+            </p>
+            <a href="{% url 'projects:project_list' %}" class="btn btn-light btn-lg mt-3">
+                <i class="fas fa-arrow-right"></i> Ver Todos los Proyectos
+            </a>
+        </div>
+    </section>
+
+    <!-- Featured Projects -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Proyectos Destacados</h2>
+            
+            {% if projects %}
+                <div class="row g-4 mb-5">
+                    {% for project in projects %}
+                        <div class="col-md-6 col-lg-4">
+                            <div class="project-card">
+                                <div class="project-card-image">
+                                    {% if project.image %}
+                                        <img src="{{ project.image.url }}" alt="{{ project.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                    {% else %}
+                                        <i class="fas fa-code"></i>
+                                    {% endif %}
+                                </div>
+                                <div class="project-card-body">
+                                    <h5 class="card-title">{{ project.title }}</h5>
+                                    <p class="card-text" style="font-size: 0.9rem; color: #666;">
+                                        {{ project.short_description|truncatewords:15 }}
+                                    </p>
+                                    
+                                    <div style="margin: 15px 0;">
+                                        <span class="badge-custom">
+                                            {{ project.get_category_display }}
+                                        </span>
+                                        <span class="badge-custom">
+                                            {{ project.get_status_display }}
+                                        </span>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        {% for tech in project.get_technologies_list %}
+                                            <span class="technology-tag">{{ tech }}</span>
+                                        {% endfor %}
+                                    </div>
+                                    
+                                    <div class="d-flex gap-2">
+                                        <a href="{% url 'projects:project_detail' project.id %}" class="btn btn-primary btn-sm flex-grow-1">
+                                            <i class="fas fa-eye"></i> Ver Detalles
+                                        </a>
+                                        {% if project.github_url %}
+                                            <a href="{{ project.github_url }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                                <i class="fab fa-github"></i>
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                
+                <!-- Pagination -->
+                {% if is_paginated %}
+                    <nav class="d-flex justify-content-center mt-5">
+                        <ul class="pagination">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=1">Primera</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+                                </li>
+                            {% endif %}
+                            
+                            {% for num in page_obj.paginator.page_range %}
+                                {% if page_obj.number == num %}
+                                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                                {% else %}
+                                    <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Última</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
+            {% else %}
+                <div class="alert alert-info text-center" role="alert">
+                    <i class="fas fa-info-circle"></i> Aún no hay proyectos destacados. <a href="{% url 'admin:index' %}">Crea uno en el admin</a>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Skills Preview -->
+    {% if skills %}
+        <section class="section" style="background-color: #f5f5f5;">
+            <div class="container">
+                <h2 class="section-title">Habilidades Técnicas</h2>
+                
+                <div class="row">
+                    {% for skill in skills|slice:":8" %}
+                        <div class="col-md-6 col-lg-3 mb-4">
+                            <div class="text-center">
+                                <div style="font-size: 2.5rem; color: var(--primary); margin-bottom: 10px;">
+                                    {% if skill.icon %}
+                                        <i class="{{ skill.icon }}"></i>
+                                    {% else %}
+                                        <i class="fas fa-star"></i>
+                                    {% endif %}
+                                </div>
+                                <h5>{{ skill.name }}</h5>
+                                <p style="color: #666; font-size: 0.9rem;">{{ skill.category }}</p>
+                                <div class="skill-level">
+                                    {% if skill.level == 'beginner' %}
+                                        {% for i in "x"|rjust:"1" %}<i class="fas fa-star skill-star"></i>{% endfor %}
+                                        {% for i in "x"|rjust:"4" %}<i class="fas fa-star skill-star empty"></i>{% endfor %}
+                                    {% elif skill.level == 'intermediate' %}
+                                        {% for i in "x"|rjust:"2" %}<i class="fas fa-star skill-star"></i>{% endfor %}
+                                        {% for i in "x"|rjust:"3" %}<i class="fas fa-star skill-star empty"></i>{% endfor %}
+                                    {% elif skill.level == 'advanced' %}
+                                        {% for i in "x"|rjust:"3" %}<i class="fas fa-star skill-star"></i>{% endfor %}
+                                        {% for i in "x"|rjust:"2" %}<i class="fas fa-star skill-star empty"></i>{% endfor %}
+                                    {% elif skill.level == 'expert' %}
+                                        {% for i in "x"|rjust:"5" %}<i class="fas fa-star skill-star"></i>{% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="text-center mt-5">
+                    <a href="{% url 'projects:skills' %}" class="btn btn-primary">
+                        Ver Todas las Habilidades
+                    </a>
+                </div>
+            </div>
+        </section>
+    {% endif %}
+
+    <!-- CTA Section -->
+    <section class="section" style="background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); color: white; text-align: center;">
+        <div class="container">
+            <h2 style="font-size: 2.5rem; margin-bottom: 20px;">¿Interesado en trabajar conmigo?</h2>
+            <p style="font-size: 1.2rem; opacity: 0.9; margin-bottom: 30px;">
+                Tengo varios proyectos disponibles para mostrar mis habilidades
+            </p>
+            <a href="{% url 'projects:project_list' %}" class="btn btn-light btn-lg">
+                Explorar Proyectos
+            </a>
+        </div>
+    </section>
+{% endblock %}

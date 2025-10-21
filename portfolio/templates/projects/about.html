@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+
+{% block title %}Acerca de mí - Brian Villanueva{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="container">
+        <h1>Acerca de mí</h1>
+        <p>Conoce más sobre mi trayectoria y experiencia profesional</p>
+    </div>
+</section>
+
+<!-- About Section -->
+<section class="section">
+    <div class="container">
+        <div class="row align-items-center">
+            <!-- Profile Image -->
+            <div class="col-lg-4 mb-4 mb-lg-0 text-center">
+                {% if profile.profile_image %}
+                    <img src="{{ profile.profile_image.url }}" alt="Foto de perfil" class="profile-image">
+                {% else %}
+                    <div class="profile-image" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-user" style="font-size: 80px; color: white;"></i>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Profile Info -->
+            <div class="col-lg-8">
+                {% if profile %}
+                    <h2 style="color: var(--primary); font-weight: 700;">{{ profile.name }}</h2>
+                    <h4 style="color: var(--secondary); margin-bottom: 20px;">{{ profile.title }}</h4>
+                    
+                    <div class="mb-4">
+                        <p style="font-size: 1.1rem; line-height: 1.8;">{{ profile.bio|linebreaks }}</p>
+                    </div>
+
+                    <!-- Contact Info -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <p><strong><i class="fas fa-map-marker-alt"></i> Ubicación:</strong> {{ profile.location }}</p>
+                            <p><strong><i class="fas fa-envelope"></i> Email:</strong> <a href="mailto:{{ profile.email }}">{{ profile.email }}</a></p>
+                        </div>
+                        <div class="col-md-6">
+                            {% if profile.phone %}
+                                <p><strong><i class="fas fa-phone"></i> Teléfono:</strong> <a href="tel:{{ profile.phone }}">{{ profile.phone }}</a></p>
+                            {% endif %}
+                            <p><strong><i class="fas fa-birthday-cake"></i> Edad:</strong> {{ profile.age }} años</p>
+                        </div>
+                    </div>
+
+                    <!-- Social Links -->
+                    <div class="mb-4">
+                        <h5 style="color: var(--primary); margin-bottom: 15px;">Conecta conmigo:</h5>
+                        {% if profile.github_url %}
+                            <a href="{{ profile.github_url }}" target="_blank" rel="noopener" class="btn btn-outline-primary btn-sm me-2 mb-2">
+                                <i class="fab fa-github"></i> GitHub
+                            </a>
+                        {% endif %}
+                        {% if profile.linkedin_url %}
+                            <a href="{{ profile.linkedin_url }}" target="_blank" rel="noopener" class="btn btn-outline-primary btn-sm me-2 mb-2">
+                                <i class="fab fa-linkedin"></i> LinkedIn
+                            </a>
+                        {% endif %}
+                        {% if profile.twitter_url %}
+                            <a href="{{ profile.twitter_url }}" target="_blank" rel="noopener" class="btn btn-outline-primary btn-sm me-2 mb-2">
+                                <i class="fab fa-twitter"></i> Twitter
+                            </a>
+                        {% endif %}
+                        {% if profile.instagram_url %}
+                            <a href="{{ profile.instagram_url }}" target="_blank" rel="noopener" class="btn btn-outline-primary btn-sm me-2 mb-2">
+                                <i class="fab fa-instagram"></i> Instagram
+                            </a>
+                        {% endif %}
+                    </div>
+
+                    <!-- Download CV -->
+                    {% if profile.cv_file %}
+                        <a href="{% url 'projects:download_cv' %}" class="btn btn-primary btn-lg">
+                            <i class="fas fa-download"></i> Descargar CV
+                        </a>
+                    {% endif %}
+                {% else %}
+                    <p class="alert alert-info">Información personal no disponible.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="section" style="background-color: #f5f5f5;">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-4 mb-4">
+                <h2 style="color: var(--primary); font-weight: 700;">{{ total_projects }}</h2>
+                <p style="font-size: 1.1rem;">Proyectos Completados</p>
+            </div>
+            <div class="col-md-4 mb-4">
+                <h2 style="color: var(--secondary); font-weight: 700;">{{ total_skills }}</h2>
+                <p style="font-size: 1.1rem;">Habilidades</p>
+            </div>
+            <div class="col-md-4 mb-4">
+                <h2 style="color: var(--accent); font-weight: 700;">45</h2>
+                <p style="font-size: 1.1rem;">Años de Experiencia Combinada</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Skills by Category -->
+<section class="section">
+    <div class="container">
+        <h2 class="section-title">Habilidades Técnicas</h2>
+        
+        <div class="row">
+            {% for category, skills in skills_by_category.items %}
+                <div class="col-lg-6 mb-4">
+                    <div class="skill-category">
+                        <h4><i class="fas fa-tools"></i> {{ category }}</h4>
+                        {% for skill in skills %}
+                            <div class="skill-item">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div>
+                                        {% if skill.icon %}
+                                            <i class="{{ skill.icon }}" style="color: var(--primary); margin-right: 10px; font-size: 1.3rem;"></i>
+                                        {% endif %}
+                                        <strong>{{ skill.name }}</strong>
+                                    </div>
+                                    <span class="badge" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                        {{ skill.get_level_display }}
+                                    </span>
+                                </div>
+                                {% if skill.description %}
+                                    <p style="margin-top: 8px; margin-bottom: 0; font-size: 0.9rem; color: #666;">
+                                        {{ skill.description }}
+                                    </p>
+                                {% endif %}
+                                <div class="skill-level" style="margin-top: 10px;">
+                                    {% for i in "1234" %}
+                                        {% if i|stringformat:"s"|add:"0" <= skill.get_level_stars %}
+                                            <i class="fas fa-star skill-star"></i>
+                                        {% else %}
+                                            <i class="fas fa-star skill-star empty"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="section" style="background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); color: white;">
+    <div class="container text-center">
+        <h2 style="font-size: 2.5rem; font-weight: 700; margin-bottom: 20px;">
+            ¿Tienes un proyecto en mente?
+        </h2>
+        <p style="font-size: 1.2rem; margin-bottom: 30px;">
+            Me encantaría colaborar contigo. ¡Ponte en contacto conmigo!
+        </p>
+        <a href="{% url 'projects:contact' %}" class="btn btn-light btn-lg">
+            <i class="fas fa-envelope"></i> Enviar Mensaje
+        </a>
+    </div>
+</section>
+
+{% endblock %}

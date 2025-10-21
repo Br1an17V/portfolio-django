@@ -1,0 +1,179 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ project.title }} - Mi Portafolio{% endblock %}
+
+{% block content %}
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>{{ project.title }}</h1>
+            <p>{{ project.short_description }}</p>
+        </div>
+    </section>
+
+    <!-- Project Details -->
+    <section class="section">
+        <div class="container">
+            <div class="row g-4">
+                <!-- Main Content -->
+                <div class="col-lg-8">
+                    <!-- Project Image -->
+                    {% if project.image %}
+                        <div class="mb-4">
+                            <img src="{{ project.image.url }}" alt="{{ project.title }}" class="img-fluid rounded" style="max-height: 400px; object-fit: cover; width: 100%;">
+                        </div>
+                    {% else %}
+                        <div class="mb-4 p-5 text-center" style="background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); color: white; border-radius: 10px;">
+                            <i class="fas fa-code" style="font-size: 4rem;"></i>
+                        </div>
+                    {% endif %}
+
+                    <!-- Description -->
+                    <div class="mb-5">
+                        <h3>Descripción</h3>
+                        <p style="line-height: 1.8; font-size: 1.1rem;">{{ project.description }}</p>
+                    </div>
+
+                    <!-- Technologies -->
+                    <div class="mb-5">
+                        <h3>Tecnologías Utilizadas</h3>
+                        <div class="d-flex flex-wrap gap-2">
+                            {% for tech in project.get_technologies_list %}
+                                <span class="technology-tag" style="font-size: 1rem; padding: 8px 15px;">
+                                    <i class="fas fa-code"></i> {{ tech }}
+                                </span>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Dates -->
+                    <div class="mb-5 p-4" style="background-color: #f5f5f5; border-radius: 10px; border-left: 4px solid var(--primary);">
+                        <h5 style="color: var(--primary); margin-bottom: 15px;">
+                            <i class="fas fa-calendar"></i> Período del Proyecto
+                        </h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <strong>Fecha de Inicio:</strong>
+                                <p>{{ project.start_date|date:"d/m/Y" }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Fecha de Finalización:</strong>
+                                <p>
+                                    {% if project.end_date %}
+                                        {{ project.end_date|date:"d/m/Y" }}
+                                    {% else %}
+                                        <span class="badge bg-success">En Progreso</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Related Projects -->
+                    {% if related_projects %}
+                        <div class="mt-5 pt-5 border-top">
+                            <h3 class="mb-4">Proyectos Relacionados</h3>
+                            <div class="row g-4">
+                                {% for related in related_projects %}
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="project-card">
+                                            <div class="project-card-image">
+                                                {% if related.image %}
+                                                    <img src="{{ related.image.url }}" alt="{{ related.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                                {% else %}
+                                                    <i class="fas fa-folder-open"></i>
+                                                {% endif %}
+                                            </div>
+                                            <div class="project-card-body">
+                                                <h5 class="card-title">{{ related.title }}</h5>
+                                                <p class="card-text" style="font-size: 0.9rem; color: #666;">
+                                                    {{ related.short_description|truncatewords:10 }}
+                                                </p>
+                                                <a href="{% url 'projects:project_detail' related.id %}" class="btn btn-primary btn-sm">
+                                                    <i class="fas fa-eye"></i> Ver Proyecto
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Sidebar -->
+                <div class="col-lg-4">
+                    <!-- Project Info Card -->
+                    <div class="card" style="border: none; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 30px;">
+                        <div class="card-body">
+                            <h5 class="card-title" style="color: var(--primary); border-bottom: 2px solid var(--primary); padding-bottom: 15px;">
+                                <i class="fas fa-info-circle"></i> Información
+                            </h5>
+
+                            <!-- Category -->
+                            <div class="mb-4 mt-4">
+                                <strong style="color: var(--primary);">Categoría</strong>
+                                <p class="mb-0">
+                                    <span class="badge" style="background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); padding: 8px 12px; font-size: 0.9rem;">
+                                        {{ project.get_category_display }}
+                                    </span>
+                                </p>
+                            </div>
+
+                            <!-- Status -->
+                            <div class="mb-4">
+                                <strong style="color: var(--primary);">Estado</strong>
+                                <p class="mb-0">
+                                    {% if project.status == 'completed' %}
+                                        <span class="badge bg-success">{{ project.get_status_display }}</span>
+                                    {% elif project.status == 'in_progress' %}
+                                        <span class="badge bg-info">{{ project.get_status_display }}</span>
+                                    {% elif project.status == 'paused' %}
+                                        <span class="badge bg-warning">{{ project.get_status_display }}</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">{{ project.get_status_display }}</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+
+                            <!-- Featured Badge -->
+                            {% if project.featured %}
+                                <div class="mb-4">
+                                    <span class="badge bg-warning" style="font-size: 0.9rem; padding: 8px 12px;">
+                                        <i class="fas fa-star"></i> Proyecto Destacado
+                                    </span>
+                                </div>
+                            {% endif %}
+
+                            <!-- Links -->
+                            <div class="mt-4 pt-4 border-top">
+                                {% if project.github_url %}
+                                    <a href="{{ project.github_url }}" target="_blank" class="btn btn-outline-primary w-100 mb-2">
+                                        <i class="fab fa-github"></i> Ver en GitHub
+                                    </a>
+                                {% endif %}
+                                
+                                {% if project.live_url %}
+                                    <a href="{{ project.live_url }}" target="_blank" class="btn btn-primary w-100">
+                                        <i class="fas fa-external-link-alt"></i> Ver en Vivo
+                                    </a>
+                                {% endif %}
+
+                                {% if not project.github_url and not project.live_url %}
+                                    <p class="text-center" style="color: #999; font-size: 0.9rem;">
+                                        <i class="fas fa-lock"></i> Proyecto privado
+                                    </p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Back Button -->
+                    <a href="{% url 'projects:project_list' %}" class="btn btn-secondary w-100" style="background-color: #999;">
+                        <i class="fas fa-arrow-left"></i> Volver a Proyectos
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

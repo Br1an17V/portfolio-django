@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+
+{% block title %}Proyectos - Mi Portafolio{% endblock %}
+
+{% block content %}
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Mis Proyectos</h1>
+            <p>Explora todos los proyectos que he desarrollado</p>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section class="section">
+        <div class="container">
+            <!-- Filters -->
+            <div class="row mb-5">
+                <div class="col-md-12">
+                    <form method="get" class="row g-3">
+                        <div class="col-md-5">
+                            <label for="category" class="form-label">Categoría</label>
+                            <select name="category" id="category" class="form-select">
+                                <option value="">Todas las categorías</option>
+                                {% for value, label in categories %}
+                                    <option value="{{ value }}" {% if selected_category == value %}selected{% endif %}>
+                                        {{ label }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-5">
+                            <label for="status" class="form-label">Estado</label>
+                            <select name="status" id="status" class="form-select">
+                                <option value="">Todos los estados</option>
+                                {% for value, label in statuses %}
+                                    <option value="{{ value }}" {% if selected_status == value %}selected{% endif %}>
+                                        {{ label }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">&nbsp;</label>
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-filter"></i> Filtrar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            {% if projects %}
+                <!-- Projects Grid -->
+                <div class="row g-4 mb-5">
+                    {% for project in projects %}
+                        <div class="col-md-6 col-lg-4">
+                            <div class="project-card">
+                                <div class="project-card-image">
+                                    {% if project.image %}
+                                        <img src="{{ project.image.url }}" alt="{{ project.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                    {% else %}
+                                        <i class="fas fa-folder-open"></i>
+                                    {% endif %}
+                                </div>
+                                <div class="project-card-body">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h5 class="card-title m-0">{{ project.title }}</h5>
+                                        {% if project.featured %}
+                                            <span title="Proyecto Destacado">
+                                                <i class="fas fa-star" style="color: #ffc107;"></i>
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <p class="card-text" style="font-size: 0.9rem; color: #666; margin-bottom: 10px;">
+                                        {{ project.short_description|truncatewords:12 }}
+                                    </p>
+                                    
+                                    <div style="margin: 12px 0;">
+                                        <span class="badge-custom">
+                                            {{ project.get_category_display }}
+                                        </span>
+                                        <span class="badge-custom">
+                                            {{ project.get_status_display }}
+                                        </span>
+                                    </div>
+                                    
+                                    <div class="mb-3" style="border-top: 1px solid #eee; padding-top: 10px;">
+                                        <small style="color: #999;">
+                                            <i class="fas fa-calendar"></i> {{ project.start_date|date:"M Y" }}
+                                        </small>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        {% for tech in project.get_technologies_list|slice:":3" %}
+                                            <span class="technology-tag">{{ tech }}</span>
+                                        {% endfor %}
+                                        {% if project.get_technologies_list|length > 3 %}
+                                            <span class="technology-tag">+{{ project.get_technologies_list|length|add:-3 }} más</span>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="d-flex gap-2">
+                                        <a href="{% url 'projects:project_detail' project.id %}" class="btn btn-primary btn-sm flex-grow-1">
+                                            <i class="fas fa-eye"></i> Ver Detalles
+                                        </a>
+                                        {% if project.github_url %}
+                                            <a href="{{ project.github_url }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                                <i class="fab fa-github"></i>
+                                            </a>
+                                        {% endif %}
+                                        {% if project.live_url %}
+                                            <a href="{{ project.live_url }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                                <i class="fas fa-external-link-alt"></i>
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Pagination -->
+                {% if is_paginated %}
+                    <nav class="d-flex justify-content-center mt-5">
+                        <ul class="pagination">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=1{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}">Primera</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}">Anterior</a>
+                                </li>
+                            {% endif %}
+                            
+                            {% for num in page_obj.paginator.page_range %}
+                                {% if page_obj.number == num %}
+                                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                                {% else %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ num }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}">{{ num }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}">Siguiente</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}">Última</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
+            {% else %}
+                <div class="alert alert-warning text-center" role="alert">
+                    <i class="fas fa-inbox"></i> No se encontraron proyectos con los filtros aplicados.
+                </div>
+            {% endif %}
+        </div>
+    </section>
+{% endblock %}

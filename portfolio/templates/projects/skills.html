@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block title %}Habilidades - Mi Portafolio{% endblock %}
+
+{% block content %}
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Mis Habilidades Técnicas</h1>
+            <p>Conocimientos y experiencia adquirida</p>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section class="section">
+        <div class="container">
+            {% if skills_by_category %}
+                <div class="row">
+                    {% for category, skills in skills_by_category.items %}
+                        <div class="col-lg-6">
+                            <div class="skill-category">
+                                <h4>
+                                    <i class="fas fa-folder"></i> {{ category }}
+                                </h4>
+                                
+                                {% for skill in skills %}
+                                    <div class="skill-item">
+                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                            <div>
+                                                <h6 style="margin: 0; color: var(--primary); font-weight: 700;">
+                                                    {% if skill.icon %}
+                                                        <i class="{{ skill.icon }}"></i>
+                                                    {% else %}
+                                                        <i class="fas fa-code"></i>
+                                                    {% endif %}
+                                                    {{ skill.name }}
+                                                </h6>
+                                                <small style="color: #999;">{{ skill.get_level_display }}</small>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Level Progress Bar -->
+                                        <div class="progress" style="height: 8px; background-color: #eee;">
+                                            {% if skill.level == 'beginner' %}
+                                                <div class="progress-bar" style="width: 25%; background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);"></div>
+                                            {% elif skill.level == 'intermediate' %}
+                                                <div class="progress-bar" style="width: 50%; background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);"></div>
+                                            {% elif skill.level == 'advanced' %}
+                                                <div class="progress-bar" style="width: 75%; background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);"></div>
+                                            {% elif skill.level == 'expert' %}
+                                                <div class="progress-bar" style="width: 100%; background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);"></div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Statistics -->
+                <div class="row mt-5 pt-5 border-top">
+                    <div class="col-md-3 text-center mb-4">
+                        <div style="font-size: 2.5rem; color: var(--primary); margin-bottom: 10px; font-weight: 700;">
+                            {{ skills|length }}
+                        </div>
+                        <p style="color: #666;">Habilidades Totales</p>
+                    </div>
+                    <div class="col-md-3 text-center mb-4">
+                        <div style="font-size: 2.5rem; color: var(--secondary); margin-bottom: 10px; font-weight: 700;">
+                            {{ skills_by_category|length }}
+                        </div>
+                        <p style="color: #666;">Categorías</p>
+                    </div>
+                    <div class="col-md-3 text-center mb-4">
+                        <div style="font-size: 2.5rem; color: var(--accent); margin-bottom: 10px; font-weight: 700;">
+                            +5
+                        </div>
+                        <p style="color: #666;">Años de Experiencia</p>
+                    </div>
+                    <div class="col-md-3 text-center mb-4">
+                        <div style="font-size: 2.5rem; color: #667eea; margin-bottom: 10px; font-weight: 700;">
+                            ∞
+                        </div>
+                        <p style="color: #666;">Pasión por Aprender</p>
+                    </div>
+                </div>
+            {% else %}
+                <div class="alert alert-info text-center" role="alert">
+                    <i class="fas fa-inbox"></i> Aún no hay habilidades registradas. <a href="{% url 'admin:index' %}">Agrega algunas</a>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="section" style="background-color: #f5f5f5;">
+        <div class="container text-center">
+            <h2 style="font-size: 2.5rem; margin-bottom: 20px;">¿Necesitas alguien con estas habilidades?</h2>
+            <p style="font-size: 1.1rem; color: #666; margin-bottom: 30px;">
+                Puedo ayudarte con proyectos de desarrollo web, aplicaciones móviles y más.
+            </p>
+            <a href="{% url 'projects:project_list' %}" class="btn btn-primary btn-lg">
+                <i class="fas fa-briefcase"></i> Ver mis Proyectos
+            </a>
+        </div>
+    </section>
+{% endblock %}
