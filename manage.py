@@ -2,7 +2,10 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
+from pathlib import Path
 
+# Add the portfolio directory to the path
+sys.path.insert(0, str(Path(__file__).parent / 'portfolio'))
 
 def main():
     """Run administrative tasks."""
