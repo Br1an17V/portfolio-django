@@ -1,6 +1,8 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
+from django.core.files.base import ContentFile
 from projects.models import Profile, Project, Skill
+import os
 
 
 class Command(BaseCommand):
@@ -12,7 +14,7 @@ class Command(BaseCommand):
             User.objects.create_superuser('Brian', 'brianvillanuevagonzalez@gmail.com', 'holamundo')
             self.stdout.write(self.style.SUCCESS('✓ Superuser created: Brian'))
 
-        # Create Profile
+        # Create Profile with photo
         if not Profile.objects.exists():
             profile = Profile.objects.create(
                 name='Brian Villanueva González',
@@ -23,6 +25,14 @@ class Command(BaseCommand):
                 location='España',
                 age=25
             )
+            
+            # Load profile photo
+            photo_path = os.path.join(os.path.dirname(__file__), '../../../../../static/perfil.jpg')
+            if os.path.exists(photo_path):
+                with open(photo_path, 'rb') as f:
+                    profile.photo.save('perfil.jpg', ContentFile(f.read()), save=True)
+                self.stdout.write(self.style.SUCCESS('✓ Profile photo loaded'))
+            
             self.stdout.write(self.style.SUCCESS('✓ Profile created'))
 
         # Create Skills
@@ -96,7 +106,7 @@ class Command(BaseCommand):
             },
             {
                 'title': 'Aplicación de Tareas',
-                'description': 'Aplicación de tareas con autenticación de usuarios, categorías y recordatorios. Diseño responsive y intuitivo.',
+                'description': 'Aplicación de tareas con autenticación de usuarios, categorías y recordatorios. Diseño responsive e intuitivo.',
                 'technologies': 'Django, React, Bootstrap, CSS, JavaScript',
                 'link': '#',
                 'category': 'Web',
@@ -117,4 +127,4 @@ class Command(BaseCommand):
                 Project.objects.create(**project_data)
         
         self.stdout.write(self.style.SUCCESS(f'✓ {len(projects_data)} Projects created'))
-        self.stdout.write(self.style.SUCCESS('\n✅ ¡Datos cargados exitosamente!'))
+        self.stdout.write(self.style.SUCCESS('\n✅ ¡Todos los datos cargados exitosamente!'))
