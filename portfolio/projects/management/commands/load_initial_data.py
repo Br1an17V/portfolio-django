@@ -39,14 +39,28 @@ class Command(BaseCommand):
                 age=25
             )
             
-            # Load profile photo
-            photo_path = os.path.join(os.path.dirname(__file__), '../../../../../static/perfil.jpg')
-            if os.path.exists(photo_path):
-                with open(photo_path, 'rb') as f:
-                    profile.photo.save('perfil.jpg', ContentFile(f.read()), save=True)
-                self.stdout.write(self.style.SUCCESS('✓ Profile photo loaded'))
-            else:
-                self.stdout.write(self.style.WARNING(f'⚠ Photo not found at {photo_path}'))
+            # Load profile image - try multiple paths
+            base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+            photo_paths = [
+                os.path.join(base_dir, 'static', 'perfil.jpg'),
+                os.path.join(base_dir, '..', 'static', 'perfil.jpg'),
+                '/home/brian/Escritorio/Luis/portfolio/portfolio/static/perfil.jpg',
+            ]
+            
+            photo_loaded = False
+            for photo_path in photo_paths:
+                if os.path.exists(photo_path):
+                    try:
+                        with open(photo_path, 'rb') as f:
+                            profile.profile_image.save('perfil.jpg', ContentFile(f.read()), save=True)
+                        self.stdout.write(self.style.SUCCESS(f'✓ Profile image loaded from {photo_path}'))
+                        photo_loaded = True
+                        break
+                    except Exception as e:
+                        self.stdout.write(self.style.WARNING(f'⚠ Error loading image from {photo_path}: {e}'))
+            
+            if not photo_loaded:
+                self.stdout.write(self.style.WARNING('⚠ Profile image not found in any expected path'))
             
             self.stdout.write(self.style.SUCCESS('✓ Profile created'))
         else:
@@ -81,105 +95,21 @@ class Command(BaseCommand):
         
         self.stdout.write(self.style.SUCCESS(f'✓ {created_skills} new skills created (Total: {Skill.objects.count()})'))
 
-        # Create Projects
+        # Create Projects - ACTUALIZA ESTOS CON TUS VERDADEROS PROYECTOS
         projects_data = [
             {
-                'title': 'Portfolio Django',
-                'description': 'Portafolio personal desarrollado con Django 5.2. Incluye sección de proyectos, habilidades y formulario de contacto. Desplegado en Railway con PostgreSQL.',
-                'short_description': 'Portfolio personal con Django',
-                'technologies': 'Django, Python, PostgreSQL, Bootstrap, CSS',
-                'github_url': 'https://github.com/Br1an17V/portfolio-django',
-                'live_url': 'https://portfolio-django-production-16a9.up.railway.app',
+                'title': 'Tu Primer Proyecto',
+                'description': 'Describe tu primer proyecto aquí',
+                'short_description': 'Primer proyecto',
+                'technologies': 'Tecnologías usadas',
+                'github_url': '',
+                'live_url': '',
                 'category': 'web',
                 'status': 'completed',
-                'start_date': date(2025, 10, 1),
-                'end_date': date(2025, 10, 22),
+                'start_date': date(2025, 1, 1),
+                'end_date': date(2025, 1, 31),
                 'featured': True,
                 'order': 1,
-            },
-            {
-                'title': 'Sistema de Gestión de Inventario',
-                'description': 'Aplicación web para gestión de inventario en tiempo real. Incluye módulos de entrada/salida de productos, reportes y control de usuarios.',
-                'short_description': 'Gestión de inventario',
-                'technologies': 'Django, Python, MySQL, JavaScript, jQuery',
-                'github_url': '',
-                'live_url': '',
-                'category': 'web',
-                'status': 'completed',
-                'start_date': date(2025, 9, 1),
-                'end_date': date(2025, 9, 30),
-                'featured': True,
-                'order': 2,
-            },
-            {
-                'title': 'API REST de Películas',
-                'description': 'API REST desarrollada con Django REST Framework. Permite consultar, crear y actualizar información de películas. Incluye autenticación por token.',
-                'short_description': 'API REST para películas',
-                'technologies': 'Django REST Framework, Python, SQLite, Postman',
-                'github_url': '',
-                'live_url': '',
-                'category': 'web',
-                'status': 'completed',
-                'start_date': date(2025, 8, 1),
-                'end_date': date(2025, 8, 31),
-                'featured': False,
-                'order': 3,
-            },
-            {
-                'title': 'Blog Personal',
-                'description': 'Blog personal con sistema de comentarios, categorías y búsqueda. Incluye panel de administración personalizado.',
-                'short_description': 'Blog con comentarios',
-                'technologies': 'Django, Python, PostgreSQL, HTML, CSS',
-                'github_url': '',
-                'live_url': '',
-                'category': 'web',
-                'status': 'completed',
-                'start_date': date(2025, 7, 1),
-                'end_date': date(2025, 7, 31),
-                'featured': False,
-                'order': 4,
-            },
-            {
-                'title': 'Chatbot con IA',
-                'description': 'Chatbot inteligente integrado con procesamiento de lenguaje natural. Responde preguntas frecuentes automáticamente.',
-                'short_description': 'Chatbot inteligente',
-                'technologies': 'Python, NLP, Django, JavaScript',
-                'github_url': '',
-                'live_url': '',
-                'category': 'api',
-                'status': 'completed',
-                'start_date': date(2025, 6, 1),
-                'end_date': date(2025, 6, 30),
-                'featured': True,
-                'order': 5,
-            },
-            {
-                'title': 'Aplicación de Tareas',
-                'description': 'Aplicación de tareas con autenticación de usuarios, categorías y recordatorios. Diseño responsive e intuitivo.',
-                'short_description': 'Gestor de tareas',
-                'technologies': 'Django, React, Bootstrap, CSS, JavaScript',
-                'github_url': '',
-                'live_url': '',
-                'category': 'web',
-                'status': 'completed',
-                'start_date': date(2025, 5, 1),
-                'end_date': date(2025, 5, 31),
-                'featured': False,
-                'order': 6,
-            },
-            {
-                'title': 'Sistema de Facturación',
-                'description': 'Sistema completo de facturación para pequeños negocios. Incluye reportes PDF, historial de facturas y gestión de clientes.',
-                'short_description': 'Sistema de facturación',
-                'technologies': 'Django, Python, ReportLab, PostgreSQL',
-                'github_url': '',
-                'live_url': '',
-                'category': 'web',
-                'status': 'completed',
-                'start_date': date(2025, 4, 1),
-                'end_date': date(2025, 4, 30),
-                'featured': False,
-                'order': 7,
             },
         ]
 
