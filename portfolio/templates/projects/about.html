@@ -19,22 +19,7 @@
             <!-- Profile Image -->
             <div class="col-lg-4 mb-4 mb-lg-0 text-center">
                 <!-- Display profile image from static folder -->
-                <img src="{% static 'perfil.jpg' %}" alt="Foto de perfil" class="profile-image" onerror="this.style.display='none'">
-                <div id="profile-placeholder" class="profile-image" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center;">
-                    <i class="fas fa-user" style="font-size: 80px; color: white;"></i>
-                </div>
-                <script>
-                    document.addEventListener('DOMContentLoaded', function() {
-                        const img = document.querySelector('img[src*="perfil.jpg"]');
-                        if (img && img.complete && img.naturalHeight === 0) {
-                            document.getElementById('profile-placeholder').style.display = 'flex';
-                        } else if (img) {
-                            img.addEventListener('load', function() {
-                                document.getElementById('profile-placeholder').style.display = 'none';
-                            });
-                        }
-                    });
-                </script>
+                <img src="{% static 'perfil.jpg' %}" alt="Foto de perfil" class="profile-image">
             </div>
 
             <!-- Profile Info -->
@@ -64,11 +49,14 @@
                     <!-- Social Links -->
                     <div class="mb-4">
                         <h5 style="color: var(--primary); margin-bottom: 15px;">Conecta conmigo:</h5>
-                        {% if profile.github_url %}
-                            <a href="{{ profile.github_url }}" target="_blank" rel="noopener" class="btn btn-outline-primary btn-sm me-2 mb-2">
-                                <i class="fab fa-github"></i> GitHub
-                            </a>
-                        {% endif %}
+                        <!-- Download CV Button -->
+                        <a href="{% static 'C.V-Brian _Villanueva.pdf' %}" download class="btn btn-primary btn-sm me-2 mb-2">
+                            <i class="fas fa-download"></i> Descargar CV
+                        </a>
+                        <!-- GitHub Link -->
+                        <a href="https://github.com/Br1an17V" target="_blank" rel="noopener" class="btn btn-outline-primary btn-sm me-2 mb-2">
+                            <i class="fab fa-github"></i> GitHub
+                        </a>
                         {% if profile.linkedin_url %}
                             <a href="{{ profile.linkedin_url }}" target="_blank" rel="noopener" class="btn btn-outline-primary btn-sm me-2 mb-2">
                                 <i class="fab fa-linkedin"></i> LinkedIn
