@@ -25,7 +25,7 @@ class Command(BaseCommand):
             Skill.objects.all().delete()
             self.stdout.write(self.style.WARNING('⚠ Cleared existing data'))
 
-        # Create Profile
+        # Create Profile - Store image path from static folder
         if not Profile.objects.exists():
             profile = Profile.objects.create(
                 name='Brian Villanueva González',
@@ -34,14 +34,13 @@ class Command(BaseCommand):
                 email='brianvillanuevagonzalez@gmail.com',
                 phone='666281793',
                 location='Málaga, España',
-                age=45,
-                profile_image='profile/2025/10/perfil.jpg'
+                age=45
             )
-            self.stdout.write(self.style.SUCCESS('✓ Profile created with image reference'))
+            self.stdout.write(self.style.SUCCESS('✓ Profile created'))
         else:
             self.stdout.write(self.style.WARNING('⚠ Profile already exists'))
 
-        # Create Skills - Basadas en tus tecnologías reales
+        # Create Skills
         skills_data = [
             # Lenguajes
             ('PHP', 'advanced', 'Lenguajes'),
@@ -78,7 +77,7 @@ class Command(BaseCommand):
         
         self.stdout.write(self.style.SUCCESS(f'✓ {created_skills} new skills created (Total: {Skill.objects.count()})'))
 
-        # Create Projects - Tus 7 proyectos reales
+        # Create Projects
         projects_data = [
             {
                 'title': 'Juego PHP "Adivina el número"',
