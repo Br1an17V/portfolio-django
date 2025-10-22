@@ -1,9 +1,7 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
-from django.core.files.base import ContentFile
 from projects.models import Profile, Project, Skill
 from datetime import date
-import os
 
 
 class Command(BaseCommand):
@@ -27,7 +25,7 @@ class Command(BaseCommand):
             Skill.objects.all().delete()
             self.stdout.write(self.style.WARNING('⚠ Cleared existing data'))
 
-        # Create Profile with image
+        # Create Profile
         if not Profile.objects.exists():
             profile = Profile.objects.create(
                 name='Brian Villanueva González',
@@ -36,33 +34,10 @@ class Command(BaseCommand):
                 email='brianvillanuevagonzalez@gmail.com',
                 phone='666281793',
                 location='Málaga, España',
-                age=45
+                age=45,
+                profile_image='profile/2025/10/perfil.jpg'
             )
-            
-            # Load profile image - try multiple paths
-            base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
-            photo_paths = [
-                os.path.join(base_dir, 'static', 'perfil.jpg'),
-                os.path.join(base_dir, '..', 'static', 'perfil.jpg'),
-                '/home/brian/Escritorio/Luis/portfolio/portfolio/static/perfil.jpg',
-            ]
-            
-            photo_loaded = False
-            for photo_path in photo_paths:
-                if os.path.exists(photo_path):
-                    try:
-                        with open(photo_path, 'rb') as f:
-                            profile.profile_image.save('perfil.jpg', ContentFile(f.read()), save=True)
-                        self.stdout.write(self.style.SUCCESS(f'✓ Profile image loaded'))
-                        photo_loaded = True
-                        break
-                    except Exception as e:
-                        self.stdout.write(self.style.WARNING(f'⚠ Error loading image: {e}'))
-            
-            if not photo_loaded:
-                self.stdout.write(self.style.WARNING('⚠ Profile image not found'))
-            
-            self.stdout.write(self.style.SUCCESS('✓ Profile created'))
+            self.stdout.write(self.style.SUCCESS('✓ Profile created with image reference'))
         else:
             self.stdout.write(self.style.WARNING('⚠ Profile already exists'))
 
